@@ -8,7 +8,7 @@ Example installation instructions on Debian-like systems:
 
 ```sh
 $ sudo apt-get install python3.5
-$ git clone --recursive --depth 1 https://github.com/cprn/steamlinuxchecker.git
+$ git clone --recursive --depth 1 https://gitlab.com/lue-gamers/steamlinuxchecker.git
 $ cd steamlinuxchecker
 $ cp config_example.ini config.ini
 $ vim config.ini # set your Steamp API key in here
