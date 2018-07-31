@@ -28,3 +28,15 @@ The name of the group `LinuxUsersExclusively` will work for `checkgroup`.
 Platform data is stored in simple file based cache in `~/tmp/steamwww_cache.pkl`.
 First run will be slow, next runs will have most of the platform info cached.
 Cached data older than 90 days is refreshed to handle adding or dropping Linux support.
+
+# Troubleshooting
+If you're having a lot of false positives (as in games that run on Linux but the
+script is showing they don't) it's probably because your IP is based in Germany
+(where for some reason Valve decided to display different platform icons than
+for the rest of the World). You can try to use an HTTP proxy like so:
+
+    https_proxy=http://<proxy_ip>:<proxy_port> ./checkuser cprn
+
+If some particular proxy doesn't work for you, try one or two others before
+giving up. A list of free HTTP proxies: https://www.sslproxies.org/. Don't
+forget to remove your cache first.
