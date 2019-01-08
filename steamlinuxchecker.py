@@ -5,14 +5,13 @@ from steamwww import Scraper
 
 
 scraper = Scraper()
+config = configparser.ConfigParser()
+config.read('config.ini')
 
 
 def get_steam_api():
-    config = configparser.ConfigParser()
-    config.read('config.ini')
-
     try:
-        steamapi.core.APIConnection(api_key=config['api']['key'])
+        steamapi.core.APIConnection(api_key=config['api'].get('key'))
     except KeyError:
         raise SystemExit('Copy config_example.ini to config.ini and set the api.key value!')
     return steamapi
@@ -32,6 +31,8 @@ def check_steam_user(user, verbose = False):
     linux = 0
     try:
         for game in user.games:
+            if config['scan'].getboolean('ignore_zero_playtime') and game.playtime_forever == 0:
+                continue
             total += game.playtime_forever
             badge = '-----'
             if scraper.runs_on_linux(game.id, verbose):
@@ -41,7 +42,6 @@ def check_steam_user(user, verbose = False):
             verbose and sys.stdout.flush()
     except steamapi.errors.AccessException:
         user.name += ' (private)'
-        pass
 
     score = 0
     if total > 1:
