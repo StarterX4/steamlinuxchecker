@@ -4,3 +4,6 @@
 [submodule "simplecache"]
 	path = simplecache
 	url = https://gitlab.com/cprn/simplecache.git
+[submodule "steamdb"]
+	path = steamdb
+	url = https://github.com/SteamDatabase/SteamLinux
