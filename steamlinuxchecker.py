@@ -30,7 +30,8 @@ def check_steam_user(user, verbose = False):
     total = 0
     linux = 0
     try:
-        for game in user.games:
+        count = len(user.games)
+        for i, game in enumerate(user.games, start = 1):
             if config['scan'].getboolean('ignore_zero_playtime') and game.playtime_forever == 0:
                 continue
             total += game.playtime_forever
@@ -38,8 +39,7 @@ def check_steam_user(user, verbose = False):
             if scraper.runs_on_linux(game.id, verbose):
                 badge = 'LINUX'
                 linux += game.playtime_forever
-            verbose and sys.stdout.write(badge + ' %6s ' % game.playtime_forever + game.name + "\n")
-            verbose and sys.stdout.flush()
+            verbose and print_with_progress(badge + ' %6s ' % game.playtime_forever + game.name, i, count)
     except steamapi.errors.AccessException:
         user.name += ' (private)'
 
@@ -51,6 +51,16 @@ def check_steam_user(user, verbose = False):
     verbose and print_user_summary(user, stats)
     return stats
 
+def print_with_progress(message, iteration, total):
+    l = len(str(total))
+    percent = ("{0:.2f}").format(100 * (iteration / float(total)))
+    sys.stderr.write(28 * ' ' + '\r')
+    sys.stderr.flush()
+    sys.stdout.write(message + '\n')
+    sys.stdout.flush()
+    sys.stderr.write(' {:5} / {} ({}%)\r'.format(iteration, total, percent))
+    sys.stderr.flush()
+
 def print_user_summary(user, stats):
     sys.stdout.write("\nSteamID: {}\nUser: {}\nProfile: {}\nTotal: {:5d}h {:2d}m\nLinux: {:5d}h {:2d}m\nScore: {:10.2%}\n".format(
         user.id,
@@ -61,4 +71,3 @@ def print_user_summary(user, stats):
         stats[2]
     ))
     sys.stdout.flush()
-
