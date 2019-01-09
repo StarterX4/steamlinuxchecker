@@ -32,6 +32,8 @@ def check_steam_user(user, verbose = False):
     try:
         count = len(user.games)
         for i, game in enumerate(user.games, start = 1):
+            if config.has_option('scan', 'ignore_appids') and str(game.id) in config['scan'].get('ignore_appids').split():
+                continue
             if config['scan'].getboolean('ignore_zero_playtime') and game.playtime_forever == 0:
                 continue
             total += game.playtime_forever
