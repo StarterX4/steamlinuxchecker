@@ -1,9 +1,11 @@
 # SteamLinuxChecker
 Ever wondered if you're a true Linux gamer?
 
-# HowTo
-Requires `python3.5` or newer and a [Steam API key](https://steamcommunity.com/dev/apikey).
+# Dependencies
+Requires `python3.5`, depends on [Steam API key](https://steamcommunity.com/dev/apikey)
+and community powered [SteamDB Linux games list](https://github.com/SteamDatabase/SteamLinux).
 
+# Installation
 Example installation instructions on Debian-like systems:
 
 ```sh
@@ -16,7 +18,7 @@ $ ./checkuser {profile_url|vanity_name|profile_id}
 $ ./checkgroup {group_name}
 ```
 
-# Vanity and Group
+# Usage
 * https://steamcommunity.com/id/cprn
 * https://steamcommunity.com/profiles/76561198090757837
 * https://steamcommunity.com/groups/LinuxUsersExclusively
@@ -24,9 +26,19 @@ $ ./checkgroup {group_name}
 Both `cprn` and `76561198090757837` will work for `checkuser`.
 The name of the group `LinuxUsersExclusively` will work for `checkgroup`.
 
+# Updating
+To update you can either backup your local `config.ini` and redo the installation
+process or call:
+
+```sh
+$ cd steamlinuxchecker
+$ git pull
+$ git submodule update --recursive --init # if dependencies changed
+```
+
 # Notes
 Platform data is stored in simple file based cache in `~/tmp/steamwww_cache.pkl`.
-First run will be slow, next runs will have most of the platform info cached.
+First run might be slow, next runs should have most of the platform info cached.
 Cached data older than 90 days is refreshed to handle adding or dropping Linux support.
 
 # Troubleshooting
@@ -38,5 +50,5 @@ for the rest of the World). You can try to use an HTTP proxy like so:
     https_proxy=http://<proxy_ip>:<proxy_port> ./checkuser cprn
 
 If some particular proxy doesn't work for you, try one or two others before
-giving up. A list of free HTTP proxies: https://www.sslproxies.org/. Don't
+giving up. A list of free HTTPS proxies: https://www.sslproxies.org/. Don't
 forget to remove your cache first.
