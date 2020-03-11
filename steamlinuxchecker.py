@@ -1,75 +1,74 @@
 import sys
 import configparser
-from steamapi import steamapi
-from steamwww import Scraper
+import requests
 
 
-scraper = Scraper()
 config = configparser.ConfigParser()
 config.read('config.ini')
 
+if (not config.has_option('api', 'key')):
+    raise SystemExit("Can't find api.key in `config.ini` file.");
 
-def get_steam_api():
+def get_json(url):
     try:
-        steamapi.core.APIConnection(api_key=config['api'].get('key'))
+        r = requests.get(url)
+        assert r.status_code == 200, f"Can't open url ({r.status_code})"
+        return r.json()
+    except:
+        print(r.json())
+        raise SystemExit()
+
+def get_steam_id(id):
+    for prefix in ['http://steamcommunity.com/id/', 'https://steamcommunity.com/id/', 'http://steamcommunity.com/profiles/', 'https://steamcommunity.com/profiles/']:
+        id = id.replace(prefix, '')
+    if len(id) == 17 and id.isdigit():
+        return id
+    key = config['api'].get('key')
+    data = get_json(f"https://api.steampowered.com/ISteamUser/ResolveVanityURL/v1/?key={key}&vanityurl={id}")
+    return data['response']['steamid']
+
+def get_user_games(id):
+    key = config['api'].get('key')
+    data = get_json(f"https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key={key}&steamid={id}")
+    return data['response']['games']
+
+def check_steam_user(id, verbose = False):
+    forever_total = 0
+    linux = mac = windows = 0
+    ignore_appids = config['scan'].get('ignore_appids').split() if config.has_option('scan', 'ignore_appids') else []
+    try:
+        games = get_user_games(id)
+        count = len(games)
+        for i, game in enumerate(games, start = 1):
+            if  str(game['appid']) in ignore_appids:
+                continue
+            forever_total += game['playtime_forever']
+            linux += game['playtime_linux_forever']
+            mac += game['playtime_mac_forever']
+            windows += game['playtime_windows_forever']
+            verbose and print_progress(i, count)
     except KeyError:
-        raise SystemExit('Copy config_example.ini to config.ini and set the api.key value!')
-    return steamapi
+        verbose and print(f"SteamID {id} private")
 
-def get_steam_user(steamapi, id):
-    try:
-        try:
-          user = steamapi.user.SteamUser(userid=int(id))
-        except ValueError:
-          user = steamapi.user.SteamUser(userurl=id)
-    except steamapi.errors.UserNotFoundError:
-        raise SystemExit('User not found.')
-    return user
+    platform_total = linux + mac + windows
+    verbose and print_user_summary(id, forever_total, platform_total, linux, mac, windows)
+    return forever_total, platform_total, linux, mac, windows
 
-def check_steam_user(user, verbose = False):
-    total = 0
-    linux = 0
-    try:
-        count = len(user.games)
-        for i, game in enumerate(user.games, start = 1):
-            if config.has_option('scan', 'ignore_appids') and str(game.id) in config['scan'].get('ignore_appids').split():
-                continue
-            if config['scan'].getboolean('ignore_zero_playtime') and game.playtime_forever == 0:
-                continue
-            total += game.playtime_forever
-            badge = '-----'
-            if scraper.runs_on_linux(game.id, verbose):
-                badge = 'LINUX'
-                linux += game.playtime_forever
-            verbose and print_with_progress(badge + ' %6s ' % game.playtime_forever + game.name, i, count)
-    except steamapi.errors.AccessException:
-        user.name += ' (private)'
-
-    score = 0
-    if total > 1:
-        score = linux/total
-
-    stats = (total, linux, score)
-    verbose and print_user_summary(user, stats)
-    return stats
-
-def print_with_progress(message, iteration, total):
-    l = len(str(total))
+def print_progress(iteration, total):
     percent = ("{0:.2f}").format(100 * (iteration / float(total)))
     sys.stderr.write(28 * ' ' + '\r')
     sys.stderr.flush()
-    sys.stdout.write(message + '\n')
-    sys.stdout.flush()
     sys.stderr.write(' {:5} / {} ({}%)\r'.format(iteration, total, percent))
     sys.stderr.flush()
 
-def print_user_summary(user, stats):
-    sys.stdout.write("\nSteamID: {}\nUser: {}\nProfile: {}\nTotal: {:5d}h {:2d}m\nLinux: {:5d}h {:2d}m\nScore: {:10.2%}\n".format(
-        user.id,
-        user.name,
-        user.profile_url,
-        *divmod(stats[0], 60),
-        *divmod(stats[1], 60),
-        stats[2]
+def print_user_summary(id, forever_total, platform_total, linux, mac, windows):
+    score = 0
+    if platform_total > 0:
+        score = linux/platform_total
+    sys.stdout.write("\nSteamID: {}\nTotal: {:5d}h {:2d}m\nLinux: {:5d}h {:2d}m\nScore: {:10.2%}\n".format(
+        id,
+        *divmod(platform_total, 60),
+        *divmod(linux, 60),
+        score
     ))
     sys.stdout.flush()
