@@ -6,7 +6,7 @@ import requests
 config = configparser.ConfigParser()
 config.read('config.ini')
 
-if (not config.has_option('api', 'key')):
+if not config.has_option('api', 'key'):
     raise SystemExit("Can't find api.key in `config.ini` file.")
 
 def get_json(url):
@@ -32,7 +32,7 @@ def get_user_games(id):
     data = get_json(f"https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key={key}&steamid={id}")
     return data['response']['games']
 
-def check_steam_user(id, verbose = False):
+def check_steam_user(id, verbose=False):
     forever_total = 0
     linux = mac = windows = 0
     ignore_appids = config['scan'].get('ignore_appids').split() if config.has_option('scan', 'ignore_appids') else []
