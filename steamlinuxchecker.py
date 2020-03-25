@@ -7,7 +7,7 @@ config = configparser.ConfigParser()
 config.read('config.ini')
 
 if (not config.has_option('api', 'key')):
-    raise SystemExit("Can't find api.key in `config.ini` file.");
+    raise SystemExit("Can't find api.key in `config.ini` file.")
 
 def get_json(url):
     try:
