@@ -45,7 +45,7 @@ class Database:
     def update(self, table, where, **data):
         values = []
         for k, v in data.items():
-            values.append(f"k = \"{v}\"")
+            values.append(f"{k} = \"{v}\"")
         self._execute(f"update {table} set {','.join(values)} where {where}")
         self._commit()
 
