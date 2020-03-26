@@ -91,6 +91,12 @@ class Database:
         result = self._execute(f'SELECT * FROM {table} WHERE {where}')
         return [dict(row) for row in result.fetchall()]
 
+    def _changed(self, new, old):
+        for param in vars(new):
+            if getattr(old, param) != getattr(new, param):
+                return True
+        return False
+
     def _insert(self, table, data):
         columns = []
         values = []
@@ -129,14 +135,14 @@ class Database:
 
     def save(self, entity):
         table = self._table(entity)
-        from_db = None
         if self._timestamped(table):
             from_db = self.read(entity)
-        if from_db is None:
-            self._insert(table, vars(entity))
-        else:
-            where = self._where(entity, self._primary_key(table))
-            self._update(table, vars(entity), where)
+            if from_db is not None:
+                if self._changed(entity, from_db):
+                    where = self._where(entity, self._primary_key(table))
+                    self._update(table, vars(entity), where)
+                return
+        self._insert(table, vars(entity))
 
 
 class Entity:
