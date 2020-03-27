@@ -1,6 +1,6 @@
 from datetime import datetime
 from copy import copy
-from sqlite3 import connect, OperationalError, Row
+from sqlite3 import connect, register_adapter, register_converter, OperationalError, Row, PARSE_DECLTYPES
 
 
 class Database:
@@ -13,9 +13,12 @@ class Database:
 
     def _connect(self, path):
         try:
-            return connect(path)
+            connection = connect(path, detect_types=PARSE_DECLTYPES)
         except OperationalError as e:
             raise SystemExit(f"Can't connect to database, check write permissions for: {path}\nError: {e}")
+        register_adapter(bool, int)
+        register_converter("BOOLEAN", lambda v: bool(int(v)))
+        return connection
 
     def _execute(self, query):
         try:
