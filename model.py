@@ -26,17 +26,20 @@ class Database:
     def _update_schema(self):
         self._execute('''CREATE TABLE IF NOT EXISTS users (
                       id INTEGER PRIMARY KEY,
-                      vanity TEXT,
+                      persona TEXT,
+                      name TEXT,
+                      profile_url TEXT,
                       image_url TEXT,
                       created TIMESTAMP,
                       updated TIMESTAMP)''')
         self._execute('''CREATE TABLE IF NOT EXISTS games (
                       id INTEGER PRIMARY KEY,
-                      title TEXT,
+                      name TEXT,
                       image_url TEXT,
                       linux_support BOOLEAN,
                       mac_support BOOLEAN,
                       windows_support BOOLEAN,
+                      release_date TIMESTAMP,
                       created TIMESTAMP,
                       updated TIMESTAMP)''')
         self._execute('''CREATE TABLE IF NOT EXISTS groups (
@@ -154,20 +157,23 @@ class Entity:
 
 
 class User(Entity):
-    def __init__(self, id, vanity, image_url):
+    def __init__(self, id, persona=None, name=None, profile_url=None, image_url=None):
         self.id = id
-        self.vanity = vanity
+        self.persona = persona
+        self.name = name
+        self.profile_url = profile_url
         self.image_url = image_url
 
 
 class Game(Entity):
-    def __init__(self, id, title, image_url, linux_support, mac_support, windows_support):
+    def __init__(self, id, name=None, image_url=None, linux_support=None, mac_support=None, windows_support=None, release_date=None):
         self.id = id
-        self.title = title
+        self.name = name
         self.image_url = image_url
         self.linux_support = linux_support
         self.mac_support = mac_support
         self.windows_support = windows_support
+        self.release_date = release_date
 
 
 class Group(Entity):
