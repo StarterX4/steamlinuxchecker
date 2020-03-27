@@ -5,7 +5,7 @@ from sqlite3 import connect, OperationalError, Row
 
 class Database:
 
-    def __init__(self, path='database.sqlite3'):
+    def __init__(self, path='sqlite.db'):
         self.path = path
         self.connection = self._connect(path)
         self.connection.row_factory = Row
