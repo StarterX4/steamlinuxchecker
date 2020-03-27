@@ -103,20 +103,20 @@ class Database:
         if self._timestamped(table):
             columns.append('created')
             columns.append('updated')
-            values.append(f'"{datetime.utcnow()}"')
-            values.append(f'"{datetime.utcnow()}"')
+            values.append(f'datetime("{datetime.utcnow()}")')
+            values.append(f'datetime("{datetime.utcnow()}")')
         for key, value in data.items():
             columns.append(key)
-            values.append(f'"{value}"')
+            values.append(f'{value}' if isinstance(value, (int, bool, float)) else f'"{value}"')
         self._execute(f'INSERT INTO {table} ({",".join(columns)}) VALUES ({",".join(values)})')
         self._commit()
 
     def _update(self, table, data, where):
         values = []
         if self._timestamped(table):
-            values.append(f'updated = "{datetime.utcnow()}"')
+            values.append(f'updated = datetime("{datetime.utcnow()}")')
         for key, value in data.items():
-            values.append(f'{key} = "{value}"')
+            values.append(f'{key} = {value}' if isinstance(value, (int, bool, float)) else f'{key} = "{value}"')
         self._execute(f'UPDATE {table} SET {",".join(values)} WHERE {where}')
         self._commit()
 
