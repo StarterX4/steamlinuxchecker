@@ -15,13 +15,13 @@ class Database:
         try:
             return connect(path)
         except OperationalError as e:
-            print(f"Can't connect to database, check write permissions for: {path}\nError: {e}")
+            raise SystemExit(f"Can't connect to database, check write permissions for: {path}\nError: {e}")
 
     def _execute(self, query):
         try:
             return self.connection.cursor().execute(query)
         except OperationalError as e:
-            print(f"Can't run query: {query}\nError: {e}")
+            raise SystemExit(f"Can't run query: {query}\nError: {e}")
 
     def _update_schema(self):
         self._execute('''CREATE TABLE IF NOT EXISTS users (
