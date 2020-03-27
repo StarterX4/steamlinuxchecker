@@ -135,6 +135,7 @@ class Database:
             entity_from_db = copy(entity)
             entity_from_db.__dict__ = db_values[0]
             return entity_from_db
+        return None
 
     def save(self, entity):
         table = self._table(entity)
@@ -153,7 +154,8 @@ class Entity:
         db.save(self)
 
     def read(self):
-        db.read(self)
+        from_db = db.read(self)
+        return self if from_db is None else from_db
 
 
 class User(Entity):
