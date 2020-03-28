@@ -45,12 +45,6 @@ class Database:
                       release_date TIMESTAMP,
                       created TIMESTAMP,
                       updated TIMESTAMP)''')
-        self._execute('''CREATE TABLE IF NOT EXISTS groups (
-                      id INTEGER NOT NULL PRIMARY KEY,
-                      name TEXT,
-                      image_url TEXT,
-                      created TIMESTAMP,
-                      updated TIMESTAMP)''')
         self._execute('''CREATE TABLE IF NOT EXISTS scans (
                       id INTEGER NOT NULL PRIMARY KEY,
                       user_id INTEGER NOT NULL,
@@ -70,13 +64,6 @@ class Database:
                       total_playtime INTEGER,
                       FOREIGN KEY (game_id) REFERENCES games(id),
                       FOREIGN KEY (scan_id) REFERENCES scans(id))''')
-        self._execute('''CREATE TABLE IF NOT EXISTS memberships (
-                      id INTEGER NOT NULL PRIMARY KEY,
-                      user_id INTEGER NOT NULL,
-                      group_id INTEGER NOT NULL,
-                      date TIMESTAMP,
-                      FOREIGN KEY (user_id) REFERENCES users(id),
-                      FOREIGN KEY (group_id) REFERENCES groups(id))''')
 
     def _commit(self):
         self.connection.commit()
@@ -188,13 +175,6 @@ class Game(Entity):
         self.release_date = release_date
 
 
-class Group(Entity):
-    def __init__(self, id, name, image_url):
-        self.id = id
-        self.name = name
-        self.image_url = image_url
-
-
 class Scan(Entity):
     def __init__(self, id, user_id, linux=None, mac=None, windows=None, total=None):
         self.id = id
@@ -215,14 +195,6 @@ class Playtime(Entity):
         self.windows_playtime = windows_playtime
         self.platform_playtime = platform_playtime
         self.total_playtime = total_playtime
-        self.date = date
-
-
-class Membership(Entity):
-    def __init__(self, id, user_id, group_id, date):
-        self.id = id
-        self.user_id = user_id
-        self.group_id = group_id
         self.date = date
 
 
