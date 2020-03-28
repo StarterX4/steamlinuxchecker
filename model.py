@@ -28,7 +28,7 @@ class Database:
 
     def _update_schema(self):
         self._execute('''CREATE TABLE IF NOT EXISTS users (
-                      id INTEGER PRIMARY KEY,
+                      id INTEGER NOT NULL PRIMARY KEY,
                       persona TEXT,
                       name TEXT,
                       profile_url TEXT,
@@ -36,7 +36,7 @@ class Database:
                       created TIMESTAMP,
                       updated TIMESTAMP)''')
         self._execute('''CREATE TABLE IF NOT EXISTS games (
-                      id INTEGER PRIMARY KEY,
+                      id INTEGER NOT NULL PRIMARY KEY,
                       name TEXT,
                       image_url TEXT,
                       linux_support BOOLEAN,
@@ -46,27 +46,26 @@ class Database:
                       created TIMESTAMP,
                       updated TIMESTAMP)''')
         self._execute('''CREATE TABLE IF NOT EXISTS groups (
-                      id INTEGER PRIMARY KEY,
+                      id INTEGER NOT NULL PRIMARY KEY,
                       name TEXT,
                       image_url TEXT,
                       created TIMESTAMP,
                       updated TIMESTAMP)''')
         self._execute('''CREATE TABLE IF NOT EXISTS playtimes (
-                      id INTEGER PRIMARY KEY,
-                      user_id INTEGER,
-                      game_id INTEGER,
+                      id INTEGER NOT NULL PRIMARY KEY,
+                      user_id INTEGER NOT NULL,
+                      game_id INTEGER NOT NULL,
                       linux_playtime INTEGER,
                       mac_playtime INTEGER,
                       windows_playtime INTEGER,
-                      platform_playtime INTEGER,
                       total_playtime INTEGER,
                       date TIMESTAMP,
                       FOREIGN KEY (user_id) REFERENCES users(id),
                       FOREIGN KEY (game_id) REFERENCES games(id))''')
         self._execute('''CREATE TABLE IF NOT EXISTS memberships (
-                      id INTEGER PRIMARY KEY,
-                      user_id INTEGER,
-                      group_id INTEGER,
+                      id INTEGER NOT NULL PRIMARY KEY,
+                      user_id INTEGER NOT NULL,
+                      group_id INTEGER NOT NULL,
                       date TIMESTAMP,
                       FOREIGN KEY (user_id) REFERENCES users(id),
                       FOREIGN KEY (group_id) REFERENCES groups(id))''')
