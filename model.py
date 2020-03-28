@@ -51,17 +51,25 @@ class Database:
                       image_url TEXT,
                       created TIMESTAMP,
                       updated TIMESTAMP)''')
-        self._execute('''CREATE TABLE IF NOT EXISTS playtimes (
+        self._execute('''CREATE TABLE IF NOT EXISTS scans (
                       id INTEGER NOT NULL PRIMARY KEY,
                       user_id INTEGER NOT NULL,
+                      linux INTEGER,
+                      mac INTEGER,
+                      windows INTEGER,
+                      total INTEGER,
+                      date TIMESTAMP,
+                      FOREIGN KEY (user_id) REFERENCES users(id))''')
+        self._execute('''CREATE TABLE IF NOT EXISTS playtimes (
+                      id INTEGER NOT NULL PRIMARY KEY,
                       game_id INTEGER NOT NULL,
+                      scan_id INTEGER NOT NULL,
                       linux_playtime INTEGER,
                       mac_playtime INTEGER,
                       windows_playtime INTEGER,
                       total_playtime INTEGER,
-                      date TIMESTAMP,
-                      FOREIGN KEY (user_id) REFERENCES users(id),
-                      FOREIGN KEY (game_id) REFERENCES games(id))''')
+                      FOREIGN KEY (game_id) REFERENCES games(id),
+                      FOREIGN KEY (scan_id) REFERENCES scans(id))''')
         self._execute('''CREATE TABLE IF NOT EXISTS memberships (
                       id INTEGER NOT NULL PRIMARY KEY,
                       user_id INTEGER NOT NULL,
@@ -185,6 +193,16 @@ class Group(Entity):
         self.id = id
         self.name = name
         self.image_url = image_url
+
+
+class Scan(Entity):
+    def __init__(self, id, user_id, linux=None, mac=None, windows=None, total=None):
+        self.id = id
+        self.user_id = user_id
+        self.linux = linux
+        self.mac = mac
+        self.windows = windows
+        self.total = total
 
 
 class Playtime(Entity):
