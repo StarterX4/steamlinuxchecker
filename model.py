@@ -9,6 +9,7 @@ class Database:
         self.path = path
         self.connection = self._connect(path)
         self.connection.row_factory = Row
+        self.cursor = None
         self._update_schema()
 
     def _connect(self, path):
@@ -22,7 +23,8 @@ class Database:
 
     def _execute(self, query):
         try:
-            return self.connection.cursor().execute(query)
+            self.cursor = self.connection.cursor()
+            return self.cursor.execute(query)
         except OperationalError as e:
             raise SystemExit(f"Can't run query: {query}\nError: {e}")
 
@@ -110,6 +112,7 @@ class Database:
             values.append(f'{value}' if isinstance(value, (int, bool, float)) else f'"{value}"')
         self._execute(f'INSERT INTO {table} ({",".join(columns)}) VALUES ({",".join(values)})')
         self._commit()
+        return self.cursor.lastrowid
 
     def _update(self, table, data, where):
         values = []
@@ -119,6 +122,7 @@ class Database:
             values.append(f'{key} = {value}' if isinstance(value, (int, bool, float)) else f'{key} = "{value}"')
         self._execute(f'UPDATE {table} SET {",".join(values)} WHERE {where}')
         self._commit()
+        return self.cursor.rowcount
 
     def _where(self, entity, primary_key):
         return f'{primary_key} = {getattr(entity, primary_key)}'
