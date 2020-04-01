@@ -35,8 +35,8 @@ class Database:
                       name TEXT,
                       profile_url TEXT,
                       image_url TEXT,
-                      created TIMESTAMP,
-                      updated TIMESTAMP)''')
+                      created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                      updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
         self._execute('''CREATE TABLE IF NOT EXISTS games (
                       id INTEGER NOT NULL PRIMARY KEY,
                       name TEXT,
@@ -45,19 +45,19 @@ class Database:
                       mac_support BOOLEAN,
                       windows_support BOOLEAN,
                       release_date TIMESTAMP,
-                      created TIMESTAMP,
-                      updated TIMESTAMP)''')
+                      created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                      updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
         self._execute('''CREATE TABLE IF NOT EXISTS scans (
-                      id INTEGER NOT NULL PRIMARY KEY,
+                      id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                       user_id INTEGER NOT NULL,
                       linux INTEGER,
                       mac INTEGER,
                       windows INTEGER,
                       total INTEGER,
-                      date TIMESTAMP,
+                      date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                       FOREIGN KEY (user_id) REFERENCES users(id))''')
         self._execute('''CREATE TABLE IF NOT EXISTS playtimes (
-                      id INTEGER NOT NULL PRIMARY KEY,
+                      id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                       game_id INTEGER NOT NULL,
                       scan_id INTEGER NOT NULL,
                       linux_playtime INTEGER,
@@ -66,6 +66,11 @@ class Database:
                       total_playtime INTEGER,
                       FOREIGN KEY (game_id) REFERENCES games(id),
                       FOREIGN KEY (scan_id) REFERENCES scans(id))''')
+        for table in ('users', 'games'):
+            self._execute(f'''CREATE TRIGGER IF NOT EXISTS update_{table}_timestamp
+                          AFTER UPDATE ON {table} BEGIN
+                            UPDATE {table} SET updated = CURRENT_TIMESTAMP WHERE id = NEW.id;
+                          END''')
 
     def _commit(self):
         self.connection.commit()
@@ -83,12 +88,6 @@ class Database:
                 return row['name']
         raise KeyError(f'Primary key for table {table} not found')
 
-    def _timestamped(self, table):
-        for row in self._table_info(table):
-            if row['name'] == 'created':
-                return True
-        return False
-
     def _fetch(self, table, where):
         result = self._execute(f'SELECT * FROM {table} WHERE {where}')
         return [dict(row) for row in result.fetchall()]
@@ -102,11 +101,6 @@ class Database:
     def _insert(self, table, data):
         columns = []
         values = []
-        if self._timestamped(table):
-            columns.append('created')
-            columns.append('updated')
-            values.append(f'datetime("{datetime.utcnow()}")')
-            values.append(f'datetime("{datetime.utcnow()}")')
         for key, value in data.items():
             columns.append(key)
             values.append(f'{value}' if isinstance(value, (int, bool, float)) else f'"{value}"')
@@ -116,8 +110,6 @@ class Database:
 
     def _update(self, table, data, where):
         values = []
-        if self._timestamped(table):
-            values.append(f'updated = datetime("{datetime.utcnow()}")')
         for key, value in data.items():
             values.append(f'{key} = {value}' if isinstance(value, (int, bool, float)) else f'{key} = "{value}"')
         self._execute(f'UPDATE {table} SET {",".join(values)} WHERE {where}')
@@ -140,14 +132,13 @@ class Database:
 
     def save(self, entity):
         table = self._table(entity)
-        if self._timestamped(table):
-            from_db = self.read(entity)
-            if from_db is not None:
-                if self._changed(entity, from_db):
-                    where = self._where(entity, self._primary_key(table))
-                    self._update(table, vars(entity), where)
-                return
-        self._insert(table, vars(entity))
+        from_db = self.read(entity)
+        if from_db is not None:
+            if self._changed(entity, from_db):
+                where = self._where(entity, self._primary_key(table))
+                self._update(table, vars(entity), where)
+            return
+        entity.id = self._insert(table, vars(entity))
 
 
 class Entity:
