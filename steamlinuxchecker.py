@@ -1,4 +1,4 @@
-from model import db, User, Game, Scan, Playtime, Membership
+from model import db, User, Game, Scan, Playtime
 from time import sleep
 import sys
 import configparser
