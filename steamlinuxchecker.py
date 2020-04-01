@@ -134,9 +134,8 @@ def check_steam_user(id, verbose=False):
     scan.mac = mac
     scan.windows = windows
     scan.save()
-    platform_total = linux + mac + windows
-    verbose and print_user_summary(id, forever_total, platform_total, linux, mac, windows)
-    return forever_total, platform_total, linux, mac, windows
+    verbose and print_user_summary(id, forever_total, linux, mac, windows)
+    return forever_total, linux, mac, windows
 
 def print_progress(iteration, total):
     percent = ("{0:.2f}").format(100 * (iteration / float(total)))
@@ -145,7 +144,8 @@ def print_progress(iteration, total):
     sys.stderr.write(' {:5} / {} ({}%)\r'.format(iteration, total, percent))
     sys.stderr.flush()
 
-def print_user_summary(id, forever_total, platform_total, linux, mac, windows):
+def print_user_summary(id, forever_total, linux, mac, windows):
+    platform_total = linux + mac + windows
     score = 0
     if platform_total > 0:
         score = linux/platform_total
