@@ -74,6 +74,15 @@ def get_game(id):
         game.save()
     return game
 
+def add_playtime(scan, game, user_game):
+    playtime = Playtime(scan.id,
+             game.id,
+             user_game['playtime_linux_forever'],
+             user_game['playtime_mac_forever'],
+             user_game['playtime_windows_forever'],
+             user_game['playtime_forever'])
+    playtime.save()
+
 def get_game_data(appid):
     get_game_data.counter += 1
     if get_game_data.counter % 10 == 0:
@@ -111,6 +120,7 @@ def check_steam_user(id, verbose=False):
             if game is None:
                 verbose and print(f"AppID {user_game['appid']} unavailable: https://store.steampowered.com/app/{user_game['appid']}")
                 continue
+            add_playtime(scan, game, user_game)
             forever_total += user_game['playtime_forever']
             linux += user_game['playtime_linux_forever']
             mac += user_game['playtime_mac_forever']
