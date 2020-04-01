@@ -35,6 +35,7 @@ class Database:
                       name TEXT,
                       profile_url TEXT,
                       image_url TEXT,
+                      visibility_state INTEGER,
                       created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                       updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
         self._execute('''CREATE TABLE IF NOT EXISTS games (
@@ -151,12 +152,13 @@ class Entity:
 
 
 class User(Entity):
-    def __init__(self, id, persona=None, name=None, profile_url=None, image_url=None):
+    def __init__(self, id, persona=None, name=None, profile_url=None, image_url=None, visibility_state=None):
         self.id = id
         self.persona = persona
         self.name = name
         self.profile_url = profile_url
         self.image_url = image_url
+        self.visibility_state = visibility_state # 1=playtimes private/friends, 3=playtimes public
 
 
 class Game(Entity):
