@@ -119,6 +119,11 @@ def check_steam_user(id, verbose=False):
     except KeyError as e:
         verbose and print(f"AppID {user_game['appid']} details inaccessible: {e}")
         return
+    scan.total = forever_total
+    scan.linux = linux
+    scan.mac = mac
+    scan.windows = windows
+    scan.save()
     platform_total = linux + mac + windows
     verbose and print_user_summary(id, forever_total, platform_total, linux, mac, windows)
     return forever_total, platform_total, linux, mac, windows
