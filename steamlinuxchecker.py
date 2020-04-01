@@ -1,9 +1,9 @@
+from model import db, User, Game, Scan, Playtime, Membership
+from time import sleep
 import sys
 import configparser
 import locale
 import requests
-from datetime import datetime
-from model import db, User, Game, Group, Playtime, Membership
 
 
 config = configparser.ConfigParser()
@@ -71,14 +71,12 @@ def get_game(id):
                     game_data['platforms']['windows']
                     )
         game.save()
-        raise SystemExit('will not risk ban')
     return game
 
 def get_game_data(appid):
     get_game_data.counter += 1
-    print(f"game data counter: {get_game_data.counter}") # TODO
-    if get_game_data.counter % 10:
-        seconds = 20
+    if get_game_data.counter % 10 == 0:
+        seconds = 5
         sleep(seconds)
     data = get_json(f"https://store.steampowered.com/api/appdetails/?appids={appid}&filters=basic,platforms")
     try:
