@@ -59,8 +59,8 @@ class Database:
                       FOREIGN KEY (user_id) REFERENCES users(id))''')
         self._execute('''CREATE TABLE IF NOT EXISTS playtimes (
                       id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-                      game_id INTEGER NOT NULL,
                       scan_id INTEGER NOT NULL,
+                      game_id INTEGER NOT NULL,
                       linux_playtime INTEGER,
                       mac_playtime INTEGER,
                       windows_playtime INTEGER,
@@ -123,6 +123,8 @@ class Database:
     def read(self, entity):
         table = self._table(entity)
         primary_key = self._primary_key(table)
+        if getattr(entity, primary_key) is None:
+            return None
         where = self._where(entity, primary_key)
         db_values = self._fetch(table, where)
         if len(db_values) == 1:
@@ -173,8 +175,8 @@ class Game(Entity):
 
 
 class Scan(Entity):
-    def __init__(self, id, user_id, linux=None, mac=None, windows=None, total=None):
-        self.id = id
+    id = None
+    def __init__(self, user_id, linux=None, mac=None, windows=None, total=None):
         self.user_id = user_id
         self.linux = linux
         self.mac = mac
@@ -183,16 +185,15 @@ class Scan(Entity):
 
 
 class Playtime(Entity):
-    def __init__(self, id, user_id, game_id, linux_playtime, mac_playtime, windows_playtime, platform_playtime, total_playtime, date):
-        self.id = id
-        self.user_id = user_id
+    id = None
+    def __init__(self, scan_id, game_id, linux_playtime, mac_playtime, windows_playtime, total_playtime):
+        self.scan_id = scan_id
         self.game_id = game_id
         self.linux_playtime = linux_playtime
         self.mac_playtime = mac_playtime
         self.windows_playtime = windows_playtime
         self.platform_playtime = platform_playtime
         self.total_playtime = total_playtime
-        self.date = date
 
 
 db = Database()
