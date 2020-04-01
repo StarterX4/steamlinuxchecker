@@ -1,9 +1,9 @@
-from model import db, User, Game, Scan, Playtime
-from time import sleep
-import sys
 import configparser
 import locale
+import sys
 import requests
+from time import sleep
+from model import User, Game, Scan, Playtime
 
 
 config = configparser.ConfigParser()

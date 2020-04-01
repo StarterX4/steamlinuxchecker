@@ -1,4 +1,3 @@
-from datetime import datetime
 from copy import copy
 from sqlite3 import connect, register_adapter, register_converter, OperationalError, Row, PARSE_DECLTYPES
 
