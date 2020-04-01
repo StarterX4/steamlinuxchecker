@@ -61,22 +61,32 @@ def get_game(id):
     game = Game(id).read()
     if game.name is None:
         game_data = get_game_data(game.id)
-        release_date = datetime.strptime(f"{game_data['release_date']['date']}", '%d %b, %Y')
+        if game_data is None:
+            return None
         game = Game(game.id,
                     game_data['name'],
                     game_data['header_image'],
                     game_data['platforms']['linux'],
                     game_data['platforms']['mac'],
-                    game_data['platforms']['windows'],
-                    release_date
+                    game_data['platforms']['windows']
                     )
         game.save()
         raise SystemExit('will not risk ban')
     return game
 
 def get_game_data(appid):
-    data = get_json(f"https://store.steampowered.com/api/appdetails/?appids={appid}&filters=basic,platforms,release_date")
-    return data[str(appid)]['data']
+    get_game_data.counter += 1
+    print(f"game data counter: {get_game_data.counter}") # TODO
+    if get_game_data.counter % 10:
+        seconds = 20
+        sleep(seconds)
+    data = get_json(f"https://store.steampowered.com/api/appdetails/?appids={appid}&filters=basic,platforms")
+    try:
+        return data[str(appid)]['data']
+    except KeyError:
+        return None
+
+get_game_data.counter = 0
 
 def check_steam_user(id, verbose=False):
     user = get_user(id)
@@ -86,18 +96,25 @@ def check_steam_user(id, verbose=False):
     try:
         user_games = get_user_games(id)
         count = len(user_games)
-        for i, user_game in enumerate(user_games, start = 1):
+    except KeyError as e:
+        verbose and print(f"SteamID {user.id} playtime inaccessible: {e}")
+        return
+    try:
+        for i, user_game in enumerate(user_games, start=1):
             if  str(user_game['appid']) in ignore_appids:
                 continue
             game = get_game(user_game['appid'])
+            if game is None:
+                verbose and print(f"AppID {user_game['appid']} unavailable: https://store.steampowered.com/app/{user_game['appid']}")
+                continue
             forever_total += user_game['playtime_forever']
             linux += user_game['playtime_linux_forever']
             mac += user_game['playtime_mac_forever']
             windows += user_game['playtime_windows_forever']
             verbose and print_progress(i, count)
-    except KeyError:
-        verbose and print(f"SteamID {id} private")
-
+    except KeyError as e:
+        verbose and print(f"AppID {user_game['appid']} details inaccessible: {e}")
+        return
     platform_total = linux + mac + windows
     verbose and print_user_summary(id, forever_total, platform_total, linux, mac, windows)
     return forever_total, platform_total, linux, mac, windows
