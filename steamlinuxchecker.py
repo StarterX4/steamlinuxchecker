@@ -39,7 +39,8 @@ def get_user(id):
                     user_data['personaname'],
                     user_data['realname'],
                     user_data['profileurl'],
-                    user_data['avatarfull']
+                    user_data['avatarfull'],
+                    user_data['communityvisibilitystate']
                     )
         user.save()
     return user
@@ -88,11 +89,16 @@ get_game_data.counter = 0
 
 def check_steam_user(id, verbose=False):
     user = get_user(id)
+    if user.visibility_state != 3:
+        verbose and print(f"SteamID {user.id} private: {user.visibility_state}")
+        return
+    scan = Scan(user.id)
+    scan.save()
     forever_total = 0
     linux = mac = windows = 0
     ignore_appids = config['scan'].get('ignore_appids').split() if config.has_option('scan', 'ignore_appids') else []
     try:
-        user_games = get_user_games(id)
+        user_games = get_user_games(user.id)
         count = len(user_games)
     except KeyError as e:
         verbose and print(f"SteamID {user.id} playtime inaccessible: {e}")
