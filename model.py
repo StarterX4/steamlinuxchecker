@@ -61,10 +61,10 @@ class Database:
                       id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
                       scan_id INTEGER NOT NULL,
                       game_id INTEGER NOT NULL,
-                      linux_playtime INTEGER,
-                      mac_playtime INTEGER,
-                      windows_playtime INTEGER,
-                      total_playtime INTEGER,
+                      linux INTEGER,
+                      mac INTEGER,
+                      windows INTEGER,
+                      total INTEGER,
                       FOREIGN KEY (game_id) REFERENCES games(id),
                       FOREIGN KEY (scan_id) REFERENCES scans(id))''')
         for table in ('users', 'games'):
@@ -186,14 +186,13 @@ class Scan(Entity):
 
 class Playtime(Entity):
     id = None
-    def __init__(self, scan_id, game_id, linux_playtime, mac_playtime, windows_playtime, total_playtime):
+    def __init__(self, scan_id, game_id, linux, mac, windows, total):
         self.scan_id = scan_id
         self.game_id = game_id
-        self.linux_playtime = linux_playtime
-        self.mac_playtime = mac_playtime
-        self.windows_playtime = windows_playtime
-        self.platform_playtime = platform_playtime
-        self.total_playtime = total_playtime
+        self.linux = linux
+        self.mac = mac
+        self.windows = windows
+        self.total = total
 
 
 db = Database()
