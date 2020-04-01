@@ -45,7 +45,6 @@ class Database:
                       linux_support BOOLEAN,
                       mac_support BOOLEAN,
                       windows_support BOOLEAN,
-                      release_date TIMESTAMP,
                       created TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                       updated TIMESTAMP DEFAULT CURRENT_TIMESTAMP)''')
         self._execute('''CREATE TABLE IF NOT EXISTS scans (
@@ -164,14 +163,13 @@ class User(Entity):
 
 
 class Game(Entity):
-    def __init__(self, id, name=None, image_url=None, linux_support=None, mac_support=None, windows_support=None, release_date=None):
+    def __init__(self, id, name=None, image_url=None, linux_support=None, mac_support=None, windows_support=None):
         self.id = id
         self.name = name
         self.image_url = image_url
         self.linux_support = linux_support
         self.mac_support = mac_support
         self.windows_support = windows_support
-        self.release_date = release_date
 
 
 class Scan(Entity):
