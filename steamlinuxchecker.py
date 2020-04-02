@@ -27,7 +27,7 @@ def get_steam_id(id):
     for unwanted in ['http://', 'https://', 'steamcommunity.com/profiles/', 'steamcommunity.com/id/', '/']:
         id = id.replace(unwanted, '')
     if len(id) == 17 and id.isdigit():
-        return id
+        return int(id)
     key = config['api'].get('key')
     data = get_json(f"https://api.steampowered.com/ISteamUser/ResolveVanityURL/v1/?key={key}&vanityurl={id}")
     return data['response']['steamid']
