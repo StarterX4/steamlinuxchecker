@@ -9,12 +9,11 @@ Example installation instructions on Debian-like systems:
 
 ```sh
 $ sudo apt-get install python3.5
-$ git clone --recursive --depth 1 https://gitlab.com/lue-gamers/steamlinuxchecker.git
+$ git clone --depth 1 https://gitlab.com/lue-gamers/steamlinuxchecker.git
 $ cd steamlinuxchecker
 $ cp config_example.ini config.ini
-$ vi config.ini # set your Steamp API key https://steamcommunity.com/dev/apikey
-$ ./checkuser {profile_url|vanity_name|profile_id}
-$ ./checkgroup {group_name}
+$ xdg-open config.ini # paste your Steam API key https://steamcommunity.com/dev/apikey
+$ ./checkuser {profile_url}
 ```
 
 # Usage
