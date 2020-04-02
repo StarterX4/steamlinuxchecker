@@ -22,7 +22,7 @@ $ ./checkuser {profile_url}
 ./checkuser $SteamID
 ```
 
-SteamID can be any of the following format:
+SteamID can be any of the following formats:
 * https://steamcommunity.com/id/cprn
 * https://steamcommunity.com/profiles/76561198090757837
 * cprn
