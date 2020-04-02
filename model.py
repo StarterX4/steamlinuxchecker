@@ -102,7 +102,12 @@ class Database:
         values = []
         for key, value in data.items():
             columns.append(key)
-            values.append(f'{value}' if isinstance(value, (int, bool, float)) else f'"{value}"')
+            if value is None:
+                values.append('NULL')
+            elif isinstance(value, (int, bool, float)):
+                values.append(f'{value}')
+            else:
+                values.append(f'"{value}"')
         self._execute(f'INSERT INTO {table} ({",".join(columns)}) VALUES ({",".join(values)})')
         self._commit()
         return self.cursor.lastrowid
@@ -110,7 +115,12 @@ class Database:
     def _update(self, table, data, where):
         values = []
         for key, value in data.items():
-            values.append(f'{key} = {value}' if isinstance(value, (int, bool, float)) else f'{key} = "{value}"')
+            if value is None:
+                values.append(f'{key} = NULL')
+            elif isinstance(value, (int, bool, float)):
+                values.append(f'{key} = {value}')
+            else:
+                values.append(f'{key} = "{value}"')
         self._execute(f'UPDATE {table} SET {",".join(values)} WHERE {where}')
         self._commit()
         return self.cursor.rowcount
