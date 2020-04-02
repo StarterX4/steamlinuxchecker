@@ -7,16 +7,19 @@ from steamlinuxchecker import get_group_id, get_group_members, check_steam_user,
 
 
 def main():
-    usage = """
+    usage = f"""
     Usage:
-        {} group_name|guid
+        {sys.argv[0]} group_name|guid|group_url
 
         group_name
             Part of the group URL after `/groups/`.
 
         guid
             Steam internal value `groupID64`.
-    """.format(sys.argv[0])
+
+        group_url
+            Guess.
+    """
 
     if len(sys.argv) != 2 or sys.argv[1] in ('-h', '--help'):
         raise SystemExit(usage)
