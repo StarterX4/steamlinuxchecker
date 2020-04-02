@@ -1,23 +1,10 @@
 #!/usr/bin/python3
 import sys
-import re
 from time import sleep
 
 import requests
-from steamlinuxchecker import *
+from steamlinuxchecker import get_group_id, get_group_members, check_steam_user, print_scan_summary
 
-
-def get_page(url):
-    r = requests.get(url)
-    assert r.status_code == 200, "Can't open %s (%d)" % (url, r.status_code)
-    return r.text
-
-def get_steam_group_members(xml):
-    rx = re.compile(r'steamID64>(\d+)')
-    ids = []
-    for match in rx.finditer(xml):
-        ids.append(match.group(1))
-    return sorted(ids)
 
 def main():
     usage = """
@@ -34,13 +21,10 @@ def main():
     if len(sys.argv) != 2 or sys.argv[1] in ('-h', '--help'):
         raise SystemExit(usage)
 
-    xml = get_page('http://steamcommunity.com/groups/%s/memberslistxml/?xml=1' % sys.argv[1])
+    group_id = get_group_id(sys.argv[1])
 
-    steamapi = get_steam_api()
-
-    for id in get_steam_group_members(xml):
-        user = get_steam_user(steamapi, id)
-        print_user_summary(user, check_steam_user(user, False))
+    for id in get_group_members(group_id):
+        print_scan_summary(check_steam_user(id, False))
         sleep(1)
 
 

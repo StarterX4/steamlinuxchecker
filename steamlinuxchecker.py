@@ -1,6 +1,7 @@
 import configparser
 import locale
 import sys
+import re
 from time import sleep
 
 import requests
@@ -22,6 +23,11 @@ def get_json(url):
     except:
         print(r.json())
         raise SystemExit()
+
+def get_page(url):
+    r = requests.get(url)
+    assert r.status_code == 200, "Can't open %s (%d)" % (url, r.status_code)
+    return r.text
 
 def get_steam_id(id):
     for unwanted in ['http://', 'https://', 'steamcommunity.com/profiles/', 'steamcommunity.com/id/', '/']:
@@ -58,6 +64,21 @@ def get_user_games(id):
     key = config['api'].get('key')
     data = get_json(f"https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key={key}&steamid={id}")
     return data['response']['games']
+
+def get_group_id(id):
+    if len(id) == 18 and id.isdigit():
+        return int(id)
+    for unwanted in ['http://', 'https://', 'steamcommunity.com/groups/', '/']:
+        id = id.replace(unwanted, '')
+    return id
+
+def get_group_members(id):
+    xml = get_page(f'http://steamcommunity.com/groups/{id}/memberslistxml/?xml=1')
+    rx = re.compile(r'steamID64>(\d+)')
+    ids = []
+    for match in rx.finditer(xml):
+        ids.append(match.group(1))
+    return sorted(ids)
 
 def get_game(id):
     game = Game(id).read()
