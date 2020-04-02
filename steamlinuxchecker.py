@@ -135,8 +135,8 @@ def check_steam_user(id, verbose=False):
     scan.mac = mac
     scan.windows = windows
     scan.save()
-    verbose and print_user_summary(id, forever_total, linux, mac, windows)
-    return forever_total, linux, mac, windows
+    verbose and print_scan_summary(scan)
+    return scan
 
 def print_progress(iteration, total):
     percent = ("{0:.2f}").format(100 * (iteration / float(total)))
@@ -145,15 +145,26 @@ def print_progress(iteration, total):
     sys.stderr.write(' {:5} / {} ({}%)\r'.format(iteration, total, percent))
     sys.stderr.flush()
 
-def print_user_summary(id, forever_total, linux, mac, windows):
-    platform_total = linux + mac + windows
+def print_scan_summary(scan):
+    user = get_user(scan.user_id)
+    total_h, total_m = divmod(scan.total, 60)
+    linux_h, linux_m = divmod(scan.linux, 60)
+    mac_h, mac_m = divmod(scan.mac, 60)
+    windows_h, windows_m = divmod(scan.windows, 60)
     score = 0
+    platform_total = scan.linux + scan.mac + scan.windows
     if platform_total > 0:
-        score = linux/platform_total
-    sys.stdout.write("\nSteamID: {}\nTotal: {:5d}h {:2d}m\nLinux: {:5d}h {:2d}m\nScore: {:10.2%}\n".format(
-        id,
-        *divmod(platform_total, 60),
-        *divmod(linux, 60),
-        score
-    ))
+        score = scan.linux/platform_total
+    pad = 16
+    pad_h = pad - 5
+    sys.stdout.write(f"\n" + \
+                     f"User id:   {str(user.persona): >{pad}}\n" + \
+                     f"SteamID: {scan.user_id: >{pad + 2}}\n" + \
+                     f"User name: {str(user.name): >{pad}}\n" + \
+                     f"Linux:     {linux_h: >{pad_h}}h {linux_m: >2}m\n" + \
+                     f"Mac:       {mac_h: >{pad_h}}h {mac_m: >2}m\n" + \
+                     f"Windows:   {windows_h: >{pad_h}}h {windows_m: >2}m\n" + \
+                     f"Total:     {total_h: >{pad_h}}h {total_m: >2}m\n" + \
+                     f"Score:     {score: >{pad}.2%}\n" + \
+                     f"{user.profile_url}\n")
     sys.stdout.flush()
