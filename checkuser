@@ -18,7 +18,7 @@ def main():
             I believe in your intelligence.
     """
 
-    if len(sys.argv) == 1:
+    if len(sys.argv) != 2 or sys.argv[1] in ('-h', '--help'):
         raise SystemExit(usage)
 
     user_id = sys.argv[1]
