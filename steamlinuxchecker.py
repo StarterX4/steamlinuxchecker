@@ -23,7 +23,7 @@ def get_json(url):
         raise SystemExit()
 
 def get_steam_id(id):
-    for unwanted in ['http://steamcommunity.com/id/', 'https://steamcommunity.com/id/', 'http://steamcommunity.com/profiles/', 'https://steamcommunity.com/profiles/', '/']:
+    for unwanted in ['http://', 'https://', 'steamcommunity.com/profiles/', 'steamcommunity.com/id/', '/']:
         id = id.replace(unwanted, '')
     if len(id) == 17 and id.isdigit():
         return id
