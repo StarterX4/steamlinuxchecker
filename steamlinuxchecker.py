@@ -33,11 +33,11 @@ def get_steam_id(id):
 
 def get_user(id):
     user = User(id).read()
-    if user.persona is None:
+    if user.visibility_state is None:
         user_data = get_user_data(user.id)
         user = User(user.id,
-                    user_data['personaname'],
-                    user_data['realname'],
+                    user_data['personaname'] if 'realname' in user_data.keys() else None,
+                    user_data['realname'] if 'realname' in user_data.keys() else None,
                     user_data['profileurl'],
                     user_data['avatarfull'],
                     user_data['communityvisibilitystate']
