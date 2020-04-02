@@ -1,8 +1,9 @@
 #!/usr/bin/python3
 import sys
 import re
+from time import sleep
+
 import requests
-import time
 from steamlinuxchecker import *
 
 
@@ -40,7 +41,7 @@ def main():
     for id in get_steam_group_members(xml):
         user = get_steam_user(steamapi, id)
         print_user_summary(user, check_steam_user(user, False))
-        time.sleep(2)
+        sleep(1)
 
 
 if __name__ == '__main__':

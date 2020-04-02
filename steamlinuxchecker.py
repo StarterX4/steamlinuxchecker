@@ -1,8 +1,9 @@
 import configparser
 import locale
 import sys
-import requests
 from time import sleep
+
+import requests
 from model import User, Game, Scan, Playtime
 
 
