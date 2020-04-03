@@ -92,15 +92,20 @@ def get_game(id):
     return Game(id)
 
 def add_playtime(scan, game, user_game):
+    strategy = config['scan'].get('save_playtime') or 1
+    if strategy == 0:
+        return
     playtime = Playtime(scan.id,
              game.id,
              user_game['playtime_linux_forever'],
              user_game['playtime_mac_forever'],
              user_game['playtime_windows_forever'],
              user_game['playtime_forever'])
-    should_save = playtime.linux + playtime.mac + playtime.windows + playtime.total > 0
-    if should_save:
-        playtime.save()
+    if strategy == 1:
+        should_save = playtime.linux + playtime.mac + playtime.windows > 0
+    if strategy == 8:
+        should_save = playtime.total > 0
+    should_save and playtime.save()
 
 def get_game_data(appid):
     data = get_json(f"https://store.steampowered.com/api/appdetails/?appids={appid}&filters=basic,platforms")
