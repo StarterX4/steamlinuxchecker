@@ -8,7 +8,7 @@ import requests
 from model import User, Game, Scan, Playtime
 
 
-config = configparser.ConfigParser()
+config = configparser.ConfigParser(inline_comment_prefixes=('#',))
 config.read('config.ini')
 locale.setlocale(locale.LC_ALL, 'en_US.UTF-8')
 
