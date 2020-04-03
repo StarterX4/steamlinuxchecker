@@ -123,7 +123,7 @@ def check_steam_user(id, verbose=False):
     scan.save()
     forever_total = 0
     linux = mac = windows = 0
-    ignore_appids = config['scan'].get('ignore_appids').split() if config.has_option('scan', 'ignore_appids') else []
+    ignore_appids = config['scan'].get('ignore_appids') or ''
     try:
         user_games = get_user_games(user.id)
         count = len(user_games)
