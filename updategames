@@ -1,0 +1,52 @@
+#!/usr/bin/python3
+import sys
+
+from model import db, Game
+from steamlinuxchecker import get_game_data, print_progress
+
+def get_played_games():
+    games = db._execute('select distinct game_id from playtimes')
+    return [row[0] for row in games.fetchall()]
+
+def update_game(id):
+    game = Game(id).read()
+    if game.name is None:
+        game_data = get_game_data(game.id)
+        if game_data is None:
+            return None
+        game = Game(game.id,
+                    game_data['name'],
+                    game_data['header_image'],
+                    game_data['platforms']['linux'],
+                    game_data['platforms']['mac'],
+                    game_data['platforms']['windows']
+                    )
+        game.save()
+    return game
+
+def main():
+    usage = f"""
+    Usage:
+        {sys.argv[0]} [appid [appid [...]]]
+
+        appid
+            Steam application ID.
+    """
+
+    if '-h' in sys.argv or '--help' in sys.argv:
+        raise SystemExit(usage)
+
+    if len(sys.argv) > 1:
+        gameids = sys.argv[1:]
+    else:
+        gameids = get_played_games()
+
+    total = len(gameids)
+    for iteration, id in enumerate(gameids):
+        iteration += 1
+        print_progress(iteration, total)
+        update_game(id)
+
+
+if __name__ == '__main__':
+    main()

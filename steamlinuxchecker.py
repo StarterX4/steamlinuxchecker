@@ -81,20 +81,7 @@ def get_group_members(id):
     return sorted(ids)
 
 def get_game(id):
-    game = Game(id).read()
-    if game.name is None:
-        game_data = get_game_data(game.id)
-        if game_data is None:
-            return None
-        game = Game(game.id,
-                    game_data['name'],
-                    game_data['header_image'],
-                    game_data['platforms']['linux'],
-                    game_data['platforms']['mac'],
-                    game_data['platforms']['windows']
-                    )
-        game.save()
-    return game
+    return Game(id)
 
 def add_playtime(scan, game, user_game):
     playtime = Playtime(scan.id,
@@ -141,9 +128,6 @@ def check_steam_user(id, verbose=False):
             if  str(user_game['appid']) in ignore_appids:
                 continue
             game = get_game(user_game['appid'])
-            if game is None:
-                verbose and print(f"AppID {user_game['appid']} unavailable: https://store.steampowered.com/app/{user_game['appid']}")
-                continue
             add_playtime(scan, game, user_game)
             forever_total += user_game['playtime_forever']
             linux += user_game['playtime_linux_forever']
