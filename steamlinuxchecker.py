@@ -18,10 +18,10 @@ if not config.has_option('api', 'key'):
 def get_json(url):
     try:
         r = requests.get(url)
-        assert r.status_code == 200, f"Can't open url ({r.status_code})"
+        assert r.status_code == 200, f"Can't open url: {url} ({r.status_code})"
         return r.json()
     except:
-        print(r.json())
+        print(f"HTTP 200 OK: {url}\nError: malformed JSON:\n{r.json()}")
         raise SystemExit()
 
 def get_page(url):
