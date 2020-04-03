@@ -43,7 +43,7 @@ def get_user(id):
     if user.visibility_state is None:
         user_data = get_user_data(user.id)
         user = User(user.id,
-                    user_data['personaname'] if 'realname' in user_data.keys() else None,
+                    user_data['personaname'] if 'personaname' in user_data.keys() else None,
                     user_data['realname'] if 'realname' in user_data.keys() else None,
                     user_data['profileurl'],
                     user_data['avatarfull'],
