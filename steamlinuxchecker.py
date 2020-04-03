@@ -103,7 +103,9 @@ def add_playtime(scan, game, user_game):
              user_game['playtime_mac_forever'],
              user_game['playtime_windows_forever'],
              user_game['playtime_forever'])
-    playtime.save()
+    should_save = playtime.linux + playtime.mac + playtime.windows + playtime.total > 0
+    if should_save:
+        playtime.save()
 
 def get_game_data(appid):
     get_game_data.counter += 1
