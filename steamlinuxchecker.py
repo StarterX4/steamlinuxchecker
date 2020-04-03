@@ -2,6 +2,7 @@ import configparser
 import locale
 import sys
 import re
+from datetime import datetime
 from time import sleep
 
 import requests
@@ -16,6 +17,13 @@ if not config.has_option('api', 'key'):
     raise SystemExit("Can't find api.key in `config.ini` file.")
 
 def get_json(url):
+    wait_seconds = config['scan'].get('seconds_between_steam_api_calls') or 3
+    wait_seconds = float(wait_seconds)
+    if hasattr(get_json, 'last_call'):
+        seconds_since = (datetime.utcnow() - get_json.last_call).total_seconds()
+        if seconds_since < wait_seconds:
+            sleep(wait_seconds - seconds_since)
+    get_json.last_call = datetime.utcnow()
     try:
         r = requests.get(url)
         assert r.status_code == 200, f"Can't open url: {url} ({r.status_code})"
@@ -95,17 +103,11 @@ def add_playtime(scan, game, user_game):
         playtime.save()
 
 def get_game_data(appid):
-    get_game_data.counter += 1
-    if get_game_data.counter % 10 == 0:
-        seconds = 5
-        sleep(seconds)
     data = get_json(f"https://store.steampowered.com/api/appdetails/?appids={appid}&filters=basic,platforms")
     try:
         return data[str(appid)]['data']
     except KeyError:
         return None
-
-get_game_data.counter = 0
 
 def check_steam_user(id, verbose=False):
     user = get_user(id)
