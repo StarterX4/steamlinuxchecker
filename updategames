@@ -37,12 +37,12 @@ def main():
         raise SystemExit(usage)
 
     if len(sys.argv) > 1:
-        gameids = sys.argv[1:]
+        appids = sys.argv[1:]
     else:
-        gameids = get_played_games()
+        appids = get_played_games()
 
-    total = len(gameids)
-    for iteration, id in enumerate(gameids):
+    total = len(appids)
+    for iteration, id in enumerate(appids):
         iteration += 1
         print_progress(iteration, total)
         update_game(id)
