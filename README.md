@@ -18,10 +18,10 @@ Edit `config.ini` and paste in [your Steam API key](https://steamcommunity.com/d
 
 # Usage
 ```sh
-./checkuser $SteamID
+./checkuser {steam_id}
 ```
 
-SteamID can be any of the following formats:
+Steam ID can be any of the following:
 * https://steamcommunity.com/id/cprn
 * https://steamcommunity.com/profiles/76561198090757837
 * cprn
@@ -37,7 +37,6 @@ ignore_appids = 730 40
 ```
 
 # Updating
-
 ```sh
 $ cd steamlinuxchecker
 $ git pull
