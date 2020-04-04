@@ -8,7 +8,7 @@ Requires `python3.5+`.
 Example installation instructions on Debian-like systems:
 
 ```sh
-$ sudo apt-get install python3.5
+$ sudo apt-get install python3
 $ git clone --depth 1 https://gitlab.com/lue-gamers/steamlinuxchecker.git
 $ cd steamlinuxchecker
 $ cp config_example.ini config.ini
