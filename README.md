@@ -5,7 +5,7 @@ Ever wondered if you're a true Linux gamer?
 Requires `python3.5+`.
 
 # Installation
-Example installation instructions on Debian-like systems:
+Installation instructions:
 
 ```sh
 $ git clone --depth 1 https://gitlab.com/lue-gamers/steamlinuxchecker.git
