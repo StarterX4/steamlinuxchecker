@@ -128,7 +128,7 @@ def check_steam_user(id, verbose=False):
         count = len(user_games)
     except KeyError as e:
         verbose and print(f"SteamID {user.id} playtime inaccessible: {e}")
-        return
+        return scan
     try:
         for i, user_game in enumerate(user_games, start=1):
             if  str(user_game['appid']) in ignore_appids:
@@ -142,7 +142,7 @@ def check_steam_user(id, verbose=False):
             verbose and print_progress(i, count)
     except KeyError as e:
         verbose and print(f"AppID {user_game['appid']} details inaccessible: {e}")
-        return
+        return scan
     scan.total = forever_total
     scan.linux = linux
     scan.mac = mac
