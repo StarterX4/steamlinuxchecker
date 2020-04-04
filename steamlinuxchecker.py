@@ -173,14 +173,13 @@ def print_scan_summary(scan):
         score = scan.linux/platform_total
     pad = 16
     pad_h = pad - 5
-    sys.stdout.write(f"\n" + \
-                     f"User id:   {str(user.persona): >{pad}}\n" + \
-                     f"SteamID: {scan.user_id: >{pad + 2}}\n" + \
-                     f"User name: {str(user.name): >{pad}}\n" + \
-                     f"Linux:     {linux_h: >{pad_h}}h {linux_m: >2}m\n" + \
-                     f"Mac:       {mac_h: >{pad_h}}h {mac_m: >2}m\n" + \
-                     f"Windows:   {windows_h: >{pad_h}}h {windows_m: >2}m\n" + \
-                     f"Total:     {total_h: >{pad_h}}h {total_m: >2}m\n" + \
-                     f"Score:     {score: >{pad}.2%}\n" + \
-                     f"{user.profile_url}\n")
+    sys.stdout.write(f"\n{user.profile_url}\n"
+                     f"SteamID: {user.id: >{pad + 2}}\n"
+                     f"Persona:   {str(user.persona): >{pad}}\n"
+                     f"Name:      {str(user.name): >{pad}}\n"
+                     f"Linux:     {linux_h: >{pad_h}}h {linux_m: >2}m\n"
+                     f"Mac:       {mac_h: >{pad_h}}h {mac_m: >2}m\n"
+                     f"Windows:   {windows_h: >{pad_h}}h {windows_m: >2}m\n"
+                     f"Total:     {total_h: >{pad_h}}h {total_m: >2}m\n"
+                     f"Score:     {score: >{pad}.2%}\n")
     sys.stdout.flush()
