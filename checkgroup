@@ -3,7 +3,7 @@ import sys
 from time import sleep
 
 import requests
-from steamlinuxchecker import get_group_id, get_group_members, check_steam_user, print_scan_summary
+from steamlinuxchecker import get_group_id, get_group_members, check_steam_user, print_scan_summary, print_progress
 
 
 def main():
@@ -25,8 +25,12 @@ def main():
         raise SystemExit(usage)
 
     group_id = get_group_id(sys.argv[1])
+    group_members = get_group_members(group_id)
 
-    for id in get_group_members(group_id):
+    total = len(group_members)
+    for iteration, id in enumerate(group_members):
+        iteration += 1
+        print_progress(iteration, total)
         print_scan_summary(check_steam_user(id, False))
         sleep(1)
 
