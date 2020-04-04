@@ -12,11 +12,11 @@ $ sudo apt-get install python3
 $ git clone --depth 1 https://gitlab.com/lue-gamers/steamlinuxchecker.git
 $ cd steamlinuxchecker
 $ cp -n config_example.ini config.ini
-$ xdg-open config.ini # paste your Steam API key https://steamcommunity.com/dev/apikey
 ```
 
-# Usage
+Edit `config.ini` and paste in [your Steam API key](https://steamcommunity.com/dev/apikey).
 
+# Usage
 ```sh
 ./checkuser $SteamID
 ```
