@@ -33,6 +33,3 @@ $ cd steamlinuxchecker
 $ git pull
 ```
 Check `config_example.ini` for new options.
-
-# TODO
-Scanning whole groups.
