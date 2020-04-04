@@ -27,15 +27,6 @@ Steam ID can be any of the following:
 * cprn
 * 76561198090757837
 
-You can exclude `appids` in `config.ini`, for example to exclude
-[Counter Strike](https://steamdb.info/app/730/) and
-[Deathmatch Classic](https://steamdb.info/app/40/):
-
-```ini
-[scan]
-ignore_appids = 730 40
-```
-
 # Updating
 ```sh
 $ cd steamlinuxchecker
