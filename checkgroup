@@ -32,7 +32,6 @@ def main():
         iteration += 1
         print_progress(iteration, total)
         print_scan_summary(check_steam_user(id, False))
-        sleep(1)
 
 
 if __name__ == '__main__':
