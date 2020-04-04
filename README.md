@@ -11,7 +11,7 @@ Example installation instructions on Debian-like systems:
 $ sudo apt-get install python3
 $ git clone --depth 1 https://gitlab.com/lue-gamers/steamlinuxchecker.git
 $ cd steamlinuxchecker
-$ cp config_example.ini config.ini
+$ cp -n config_example.ini config.ini
 $ xdg-open config.ini # paste your Steam API key https://steamcommunity.com/dev/apikey
 $ ./checkuser {profile_url}
 ```
