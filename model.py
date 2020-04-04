@@ -170,6 +170,9 @@ class User(Entity):
         self.image_url = image_url
         self.visibility_state = visibility_state # 1=playtimes private/friends, 3=playtimes public
 
+    def public(self):
+        return self.visibility_state == 3
+
 
 class Game(Entity):
     def __init__(self, id, name=None, image_url=None, linux_support=None, mac_support=None, windows_support=None):

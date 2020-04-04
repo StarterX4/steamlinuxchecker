@@ -116,10 +116,9 @@ def get_game_data(appid):
 
 def check_steam_user(id, verbose=False):
     user = get_user(id)
-    if user.visibility_state != 3:
-        verbose and print(f"SteamID {user.id} private: {user.visibility_state}")
-        return
     scan = Scan(user.id)
+    if not user.public():
+        return scan
     scan.save()
     forever_total = 0
     linux = mac = windows = 0
@@ -160,12 +159,16 @@ def print_progress(iteration, total):
 
 def print_scan_summary(scan):
     user = get_user(scan.user_id)
-    total_h, total_m = divmod(scan.total, 60)
-    linux_h, linux_m = divmod(scan.linux, 60)
-    mac_h, mac_m = divmod(scan.mac, 60)
-    windows_h, windows_m = divmod(scan.windows, 60)
+    if user.public():
+        platform_total = scan.linux + scan.mac + scan.windows
+        total_h, total_m = divmod(scan.total, 60)
+        linux_h, linux_m = divmod(scan.linux, 60)
+        mac_h, mac_m = divmod(scan.mac, 60)
+        windows_h, windows_m = divmod(scan.windows, 60)
+    else:
+        total_h = total_m = linux_h = linux_m = mac_h = mac_m = windows_h = windows_m = platform_total = 0
+        sys.stdout.write(f"\nPRIVATE ACCOUNT")
     score = 0
-    platform_total = scan.linux + scan.mac + scan.windows
     if platform_total > 0:
         score = scan.linux/platform_total
     pad = 16
