@@ -149,7 +149,6 @@ def check_steam_user(id, verbose=False):
     scan.mac = mac
     scan.windows = windows
     scan.save()
-    verbose and print_scan_summary(scan)
     return scan
 
 def print_progress(iteration, total):

@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 import sys
-from steamlinuxchecker import get_steam_id, check_steam_user
+from steamlinuxchecker import get_steam_id, check_steam_user, print_scan_summary
 
 
 def main():
@@ -22,7 +22,7 @@ def main():
         raise SystemExit(usage)
 
     user_id = sys.argv[1]
-    check_steam_user(get_steam_id(user_id), True)
+    print_scan_summary(check_steam_user(get_steam_id(user_id), True))
 
 
 if __name__ == '__main__':
