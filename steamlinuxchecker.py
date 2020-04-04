@@ -71,7 +71,7 @@ def get_users_data(ids):
 def get_user_games(id):
     key = config['api'].get('key')
     data = get_json(f"https://api.steampowered.com/IPlayerService/GetOwnedGames/v1/?key={key}&steamid={id}")
-    return data['response']['games']
+    return data['response'].get('games') or []
 
 def get_group_id(id):
     if len(id) == 18 and id.isdigit():
