@@ -93,6 +93,7 @@ def get_game(id):
 
 def add_playtime(scan, game, user_game):
     strategy = config['scan'].get('save_playtime') or 0
+    strategy = int(strategy)
     if strategy == 0:
         return
     playtime = Playtime(scan.id,
