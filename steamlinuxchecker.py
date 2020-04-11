@@ -65,6 +65,7 @@ def get_user_data(id):
 
 def get_users_data(ids):
     key = config['api'].get('key')
+    ids = [str(id) for id in ids]
     data = get_json(f"https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key={key}&steamids={','.join(ids)}")
     return data['response']['players']
 
