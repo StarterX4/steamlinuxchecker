@@ -1,3 +1,5 @@
+Import from https://gitlab.com/lue-gamers/steamlinuxchecker
+
 # SteamLinuxChecker
 Ever wondered if you're a true Linux gamer?
 
